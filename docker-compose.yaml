@@ -1,0 +1,10 @@
+version: "3"
+services:
+  t:
+    build: .
+    image: marugoshi/t
+    volumes:
+      - .:/go/src/github.com/marugoshi/t.makototokuyama.com
+    ports:
+      - 1314:1314
+    tty: true
