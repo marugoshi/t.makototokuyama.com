@@ -1,7 +1,6 @@
 ---
 title: "Docker 座学"
 date: "2018-08-19T00:00:00+09:00"
-slug: "docker-zagaku"
 draft: false
 ---
 
