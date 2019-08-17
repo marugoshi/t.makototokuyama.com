@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				rails3 のカスタムバリデーション &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2011-03-27 00:00:00 &#43;0900 JST">March 27, 2011</time>
+</div>
+		<h1 class="post-title">rails3 のカスタムバリデーション</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>Rails3 のカスタムバリデーションは Rails2 に比べるとだいぶ書きやすくなっている。<code>ActiveModel::EachValidator</code> を継承したクラスを用意して必要なメソッドを定義してあげればいい。以下は簡単な URL バリデーションのサンプル。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UrlValidator</span> <span style="color:#f92672">&lt;</span> <span style="color:#f92672">::</span><span style="color:#66d9ef">ActiveModel</span><span style="color:#f92672">::</span><span style="color:#66d9ef">EachValidator</span>
+  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">validate_each</span>(record, attribute, value)
+    <span style="color:#66d9ef">begin</span>
+      uri <span style="color:#f92672">=</span> <span style="color:#f92672">::</span><span style="color:#66d9ef">Addressable</span><span style="color:#f92672">::</span><span style="color:#66d9ef">URI</span><span style="color:#f92672">.</span>parse(value)
+      <span style="color:#66d9ef">unless</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;http&#34;</span>, <span style="color:#e6db74">&#34;https&#34;</span>, <span style="color:#e6db74">&#34;ftp&#34;</span><span style="color:#f92672">].</span>include?(uri<span style="color:#f92672">.</span>scheme)
+        <span style="color:#66d9ef">raise</span> <span style="color:#f92672">::</span><span style="color:#66d9ef">Addressable</span><span style="color:#f92672">::</span><span style="color:#66d9ef">URI</span><span style="color:#f92672">::</span><span style="color:#66d9ef">InvalidURIError</span>
+      <span style="color:#66d9ef">end</span>
+    <span style="color:#66d9ef">rescue</span> <span style="color:#f92672">::</span><span style="color:#66d9ef">Addressable</span><span style="color:#f92672">::</span><span style="color:#66d9ef">URI</span><span style="color:#f92672">::</span><span style="color:#66d9ef">InvalidURIError</span>
+      record<span style="color:#f92672">.</span>errors<span style="color:#f92672">[</span>attribute<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Invalid URL&#34;</span>
+    <span style="color:#66d9ef">end</span>
+  <span style="color:#66d9ef">end</span>
+<span style="color:#66d9ef">end</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>実際に使うときはこんな感じ。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+<span style="color:#66d9ef">Class</span> <span style="color:#66d9ef">Hoge</span> <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Base</span>
+  validates <span style="color:#e6db74">:external_url</span>, <span style="color:#e6db74">:url</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">true</span>
+<span style="color:#66d9ef">end</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>使うのは簡単だけど、このファイルをどこに置いたもんかなあと思う。<code>app/validators</code> でいいんじゃない ? みたいな記事を見かけたけど、個人的な好みとしては <code>lib</code> の下に置きたいなあというお気持ち。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir -p lib/ext/active_model/validations
+touch lib/ext/active_model/validations/url.rb</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>Rails3 では <code>lib</code> 以下は autoload パスに含まれない。いろいろと異論はあるかと思いますが <code>config/application.rb</code> にて追加する。全部読み込みたくない場合は <code>lib/autoload</code> とかディレクトリを作ってそこだけ読み込む、とかかね。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">config<span style="color:#f92672">.</span>autoload_paths <span style="color:#f92672">+=</span> <span style="color:#e6db74">%W(</span><span style="color:#e6db74">#{</span>config<span style="color:#f92672">.</span>root<span style="color:#e6db74">}</span><span style="color:#e6db74">/lib)</span></code></pre></div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2011-03-14-rake-task-for-spork/" class="left arrow">&#8592;</a>
+		<a href="/posts/2018-08-19-docker-001-zagaku/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-17 18:17:18.4592148 &#43;0900 JST m=&#43;0.546862201">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

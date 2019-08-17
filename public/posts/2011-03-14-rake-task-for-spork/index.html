@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				sprok 用の rake タスク &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2011-03-14 00:00:00 &#43;0900 JST">March 14, 2011</time>
+</div>
+		<h1 class="post-title">sprok 用の rake タスク</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>たまに言うことを聞かなくなることがあるので再起動したいと思い、愚直に書いてみた。とはいえ、すぐに guard に乗り換えてしまったので出番はあまりないのだった。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">namespace <span style="color:#e6db74">:spork</span> <span style="color:#66d9ef">do</span>
+ desc <span style="color:#e6db74">&#34;start spork in background&#34;</span>
+ task <span style="color:#e6db74">:start</span> <span style="color:#66d9ef">do</span>
+   sh <span style="color:#e6db74">%{spork &amp;}</span>
+ <span style="color:#66d9ef">end</span>
+
+ desc <span style="color:#e6db74">&#34;stop spork&#34;</span>
+ task <span style="color:#e6db74">:stop</span> <span style="color:#66d9ef">do</span>
+   <span style="color:#66d9ef">Process</span><span style="color:#f92672">.</span>kill(<span style="color:#e6db74">:TERM</span>, <span style="color:#e6db74">`ps -ef | grep spork | grep -v grep | awk &#39;{ print $2 }&#39;`</span><span style="color:#f92672">.</span>to_i)
+ <span style="color:#66d9ef">end</span>
+
+ desc <span style="color:#e6db74">&#34;restart spork&#34;</span>
+ task <span style="color:#e6db74">:restart</span> <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">[</span><span style="color:#e6db74">:stop</span>, <span style="color:#e6db74">:start</span><span style="color:#f92672">]</span>
+<span style="color:#66d9ef">end</span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2010-10-21-paperclip-with-script-runner/" class="left arrow">&#8592;</a>
+		<a href="/posts/2011-03-27-custom-validation-for-rails3/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-17 18:17:18.4612132 &#43;0900 JST m=&#43;0.548857501">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

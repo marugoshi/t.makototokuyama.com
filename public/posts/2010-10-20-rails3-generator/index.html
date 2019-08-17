@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				rails3-generator を使う &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2010-10-20 00:00:00 &#43;0900 JST">October 20, 2010</time>
+</div>
+		<h1 class="post-title">rails3-generator を使う</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>rails には generator がありファイルを作ってくれるけど gem で入れたものについては作る仕組みが用意されていない。毎度手で作るのも面倒なので新しいプロジェクトを始めるときは rails3-generator の gem を使う。RSpec や authlogic / jQUery / haml などなど、いろんなライブラリのファイルを作ってくれる。</p>
+
+<p>Rails の generator は <code>railties-3.0.0/lib/rails/generators.rb</code> の実装を見るとわかる通り、hidden_namespaces というインスタンス変数に値をセットすることで利用することができ、rails3-generators もそれを使うような実装になっている。</p>
+
+<p>この gem をインストールすることで、<code>rails g</code> で使えるコマンドが増えているのがわかる。</p>
+
+<p><code>#{Rails.root}/config/appplication.rb</code> に以下のように書くことで、モデルの作成時に RSpec のファイルや FactoryGirl のファイルを作ってくれるようになる。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">config<span style="color:#f92672">.</span>generators <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>g<span style="color:#f92672">|</span>
+  g<span style="color:#f92672">.</span>test_framework <span style="color:#e6db74">:rspec</span>, <span style="color:#e6db74">:fixture</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">true</span>, <span style="color:#e6db74">:views</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">false</span>
+  g<span style="color:#f92672">.</span>fixture_replacement <span style="color:#e6db74">:factory_girl</span>, <span style="color:#e6db74">:dir</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;spec/factories&#34;</span>
+<span style="color:#66d9ef">end</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>すばらしい。</p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2010-09-03-gitosis/" class="left arrow">&#8592;</a>
+		<a href="/posts/2010-10-21-paperclip-with-script-runner/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-17 18:17:18.4663799 &#43;0900 JST m=&#43;0.554025901">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

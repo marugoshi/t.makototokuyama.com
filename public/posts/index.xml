@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on t</title>
+    <link>http://t.makototokuyama.com/posts/</link>
+    <description>Recent content in Posts on t</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 19 Aug 2018 00:00:00 +0900</lastBuildDate>
+    
+	<atom:link href="http://t.makototokuyama.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Docker 座学</title>
+      <link>http://t.makototokuyama.com/posts/2018-08-19-docker-001-zagaku/</link>
+      <pubDate>Sun, 19 Aug 2018 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2018-08-19-docker-001-zagaku/</guid>
+      <description>次の仕事は ECS を使いたい。が、そもそも Docker について全然わかっていないので学んでいこうと思う。ゴールは本番環境で使えるようになるところまで。まずは</description>
+    </item>
+    
+    <item>
+      <title>rails3 のカスタムバリデーション</title>
+      <link>http://t.makototokuyama.com/posts/2011-03-27-custom-validation-for-rails3/</link>
+      <pubDate>Sun, 27 Mar 2011 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2011-03-27-custom-validation-for-rails3/</guid>
+      <description>Rails3 のカスタムバリデーションは Rails2 に比べるとだいぶ書きやすくなっている。ActiveModel::EachValidator を継承したクラスを用</description>
+    </item>
+    
+    <item>
+      <title>sprok 用の rake タスク</title>
+      <link>http://t.makototokuyama.com/posts/2011-03-14-rake-task-for-spork/</link>
+      <pubDate>Mon, 14 Mar 2011 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2011-03-14-rake-task-for-spork/</guid>
+      <description>たまに言うことを聞かなくなることがあるので再起動したいと思い、愚直に書いてみた。とはいえ、すぐに guard に乗り換えてしまったので出番はあまりないの</description>
+    </item>
+    
+    <item>
+      <title>script/runner で paperclip を使う</title>
+      <link>http://t.makototokuyama.com/posts/2010-10-21-paperclip-with-script-runner/</link>
+      <pubDate>Thu, 21 Oct 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-10-21-paperclip-with-script-runner/</guid>
+      <description>paperclip は Rails でファイルを扱うのにめっちゃ便利なのでよく使っている。ちょっとした要件で runner の中でも使いたかったんだけど、どうやってモデルにファイルを assign</description>
+    </item>
+    
+    <item>
+      <title>rails3-generator を使う</title>
+      <link>http://t.makototokuyama.com/posts/2010-10-20-rails3-generator/</link>
+      <pubDate>Wed, 20 Oct 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-10-20-rails3-generator/</guid>
+      <description>rails には generator がありファイルを作ってくれるけど gem で入れたものについては作る仕組みが用意されていない。毎度手で作るのも面倒なので新しいプロジェクトを</description>
+    </item>
+    
+    <item>
+      <title>Gitosis を使う</title>
+      <link>http://t.makototokuyama.com/posts/2010-09-03-gitosis/</link>
+      <pubDate>Fri, 03 Sep 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-09-03-gitosis/</guid>
+      <description>Github 使えたら最高だけど、契約やらなんやらで使えなこともある。そんな残念なケースの場合、自分たちでリポジトリを立ち上げないといけない。で、複数の</description>
+    </item>
+    
+    <item>
+      <title>rvm のインストール</title>
+      <link>http://t.makototokuyama.com/posts/2010-08-30-installing-rvm/</link>
+      <pubDate>Mon, 30 Aug 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-08-30-installing-rvm/</guid>
+      <description>RVM は複数のプロジェクトを扱うのにかなりよいプロジェクトだ。Ruby はそこまでではないにしても、Rails のアップグレードはとにかく早いし、ガ</description>
+    </item>
+    
+    <item>
+      <title>コピーした VMWare の Ubuntu イメージでネットにつながらなくなったら</title>
+      <link>http://t.makototokuyama.com/posts/2010-08-16-if-you-can-connect-internet-with-copied-vmware-ubuntu-image/</link>
+      <pubDate>Mon, 16 Aug 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-08-16-if-you-can-connect-internet-with-copied-vmware-ubuntu-image/</guid>
+      <description>VMWare の Ubuntu イメージはイメージの Identifier と MAC アドレスを組み合わせたものをファイルに記載して保存している。イメージをコピーすると立ち上がるけど、このファイ</description>
+    </item>
+    
+    <item>
+      <title>MacPorts で起動した MongoDB の自動起動</title>
+      <link>http://t.makototokuyama.com/posts/2010-06-06-auto-start-mongodb-installed-macports/</link>
+      <pubDate>Sun, 06 Jun 2010 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2010-06-06-auto-start-mongodb-installed-macports/</guid>
+      <description>MacPorts の MongoDB パッケージには起動スクリプトが含まれていないので自分で書く必要がある。ファイルそのものを用意して置いてもいいのだけど、複数のマシンで使</description>
+    </item>
+    
+  </channel>
+</rss>

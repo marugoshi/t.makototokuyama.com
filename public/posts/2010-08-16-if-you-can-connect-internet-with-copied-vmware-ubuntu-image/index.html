@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				コピーした VMWare の Ubuntu イメージでネットにつながらなくなったら &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2010-08-16 00:00:00 &#43;0900 JST">August 16, 2010</time>
+</div>
+		<h1 class="post-title">コピーした VMWare の Ubuntu イメージでネットにつながらなくなったら</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>VMWare の Ubuntu イメージはイメージの Identifier と MAC アドレスを組み合わせたものをファイルに記載して保存している。イメージをコピーすると立ち上がるけど、このファイルが違うと判断されてインターネットには繋がらない。</p>
+
+<p>解決方法は簡単で、該当のファイルがなければ起動時に勝手に作ってくるので、ただファイルを消せば良い。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">rm /etc/udev/rules.d/70-persistent-net.rules</code></pre></div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2010-06-06-auto-start-mongodb-installed-macports/" class="left arrow">&#8592;</a>
+		<a href="/posts/2010-08-30-installing-rvm/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-17 18:17:18.4844871 &#43;0900 JST m=&#43;0.572133101">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

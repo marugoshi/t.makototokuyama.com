@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				Gitosis を使う &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2010-09-03 00:00:00 &#43;0900 JST">September 3, 2010</time>
+</div>
+		<h1 class="post-title">Gitosis を使う</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+<p>Github 使えたら最高だけど、契約やらなんやらで使えなこともある。そんな残念なケースの場合、自分たちでリポジトリを立ち上げないといけない。で、複数の人が複数のプロジェクトに関わっている場合、ユーザ管理がとにかく面倒になる。そんな残念なケースがあったので自分が見ているプロジェクトのいくつかは Gitosis で管理することにした。</p>
+
+<h2 id="インストール">インストール</h2>
+
+<p>社内のサーバは Ubuntu で作ることにして、ここに Gitosis をインストールする。Gitosis 自体は Python で書かれているのでまずは必要なものをいっしょにもろもろ入れる。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo aptitude python-setuptools
+cd /usr/src/local <span style="color:#75715e"># どこかお好きなところへ</span>
+git clone git://eagain.net/gitosis.git
+cd gitosis $ sudo python setup.py install</code></pre></td></tr></table>
+</div>
+</div>
+
+<h2 id="gitosis-用の-unix-ユーザを作る">Gitosis 用の Unix ユーザを作る</h2>
+
+<p>Gitosis は root ではなく一般ユーザをプロキシとして使う。Github も同じような仕組みだと思う。git というユーザを作る。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo adduser --system --shell /bin/sh --group --disabled-password --home /home/git git</code></pre></div>
+
+<p>このユーザはログインできる必要がないのでパスワードは作らない。<code>--home</code> オプションでリポジトリが作られる場所を指定できる。どこでもいいと思うけど、root 以外では触れない場所がいいんじゃないかな。</p>
+
+<h2 id="gitosis-への管理ユーザ追加">Gitosis への管理ユーザ追加</h2>
+
+<p>Gitosis はユーザの公開鍵を使ってクライアントをユーザとして識別する。以下の要領で追加していく。ファイル名はマシンのアカウント名に合わせてある。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># ローカルにあるファイルをコピーする</span>
+scp ~/.ssh/id_rsa.pub サーバ:パス/marugoshi@imac</code></pre></div>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># ファイルがコピーされた場所で実行する</span>
+sudo -H -u git gitosis-init &lt; marugoshi@imac</code></pre></div>
+
+<h1 id="gitosis-admin">gitosis-admin</h1>
+
+<p>この状態でも一人であれば使えるかもしれない (試してないけど) 。通常、会社では特定のリポジトリには特定の人しか触れないようにしたりといった管理が必要になる。Gitosis では、その管理を gitosis-admin というリポジトリにある設定ファイルで行う。このファイルを push することで管理を行うことができる。管理している git リポジトリで自分自身も管理するとは、なかなか面白い。</p>
+
+<p>まずはダウンロードする。
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">git clone git clone ssh://git@mサーバ名/gitosis-admin.git</code></pre></div></p>
+
+<p>落としてくると、設定ファイルと公開鍵を置くディレクトリが用意されている。誰か他の人を追加する場合は鍵を受け取ってディレクトリに入れて gitosis-admin のリポジトリにpush する。設定ファイルは以下のようになっていて、リポジトリ名を / で区切ってまとめることもできる。読み取り専用のユーザを作ることも可能。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-config" data-lang="config">[gitosis]
+
+[group gitosis-admin] writable = gitosis-admin members = marugoshi@imac
+
+[プロジェクト名] writable = プロジェクト名/repo1 members = marugoshi@imac foo@bar
+[プロジェクト名] readable = プロジェクト名/repo1 members = hoge@fuga
+[プロジェクト名] writable = プロジェクト名/repo2 members = marugoshi@imac</code></pre></div>
+
+<h2 id="操作する">操作する</h2>
+
+<p>ここまできたらリポジトリを作ったり push したりなんでも。</p>
+
+<h3 id="リポジトリを作る">リポジトリを作る</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir repo1
+cd repo1
+git init
+git remote add origin ssh://git@サーバ名/opensource/repo1.git</code></pre></div>
+
+<h3 id="クローンしてファイルを追加">クローンしてファイルを追加</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">git clone ssh://git@サーバ名/opensource/repo1.git
+cd repo1
+touch README.md
+echo <span style="color:#e6db74">&#39;Oops! No good deed goes unpunished, this is dummy file.&#39;</span> &gt; README.md
+git add README.md
+git commit -m <span style="color:#e6db74">&#39;first commit&#39;</span>
+git push origin master</code></pre></div>
+
+<h2 id="ssh-のポートを指定したい場合は">SSH のポートを指定したい場合は ?</h2>
+
+<p>ポートを指定する方法は見つけられなかった。仕方がないので <code>.ssh/config</code> でなんとかする。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-config" data-lang="config">Host gitosis
+  HostName サーバ名 Port 12345</code></pre></div>
+
+<h2 id="バグ">バグ？</h2>
+
+<p>自分が試したバージョンでは hook のファイルに実行権限が与えられていなかった。修正したら問題なく使えた。</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo chmod <span style="color:#ae81ff">0755</span> /home/git/repositories/gitosis-admin.git/hooks/post-update</code></pre></div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2010-08-30-installing-rvm/" class="left arrow">&#8592;</a>
+		<a href="/posts/2010-10-20-rails3-generator/" class="right arrow">&#8594;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-17 18:17:18.4684425 &#43;0900 JST m=&#43;0.556087901">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

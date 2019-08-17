@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2018-08-19-docker-001-zagaku/</loc>
+    <lastmod>2018-08-19T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/</loc>
+    <lastmod>2018-08-19T00:00:00+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/</loc>
+    <lastmod>2018-08-19T00:00:00+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2011-03-27-custom-validation-for-rails3/</loc>
+    <lastmod>2011-03-27T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2011-03-14-rake-task-for-spork/</loc>
+    <lastmod>2011-03-14T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-10-21-paperclip-with-script-runner/</loc>
+    <lastmod>2010-10-21T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-10-20-rails3-generator/</loc>
+    <lastmod>2010-10-20T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-09-03-gitosis/</loc>
+    <lastmod>2010-09-03T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-08-30-installing-rvm/</loc>
+    <lastmod>2010-08-30T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-08-16-if-you-can-connect-internet-with-copied-vmware-ubuntu-image/</loc>
+    <lastmod>2010-08-16T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2010-06-06-auto-start-mongodb-installed-macports/</loc>
+    <lastmod>2010-06-06T00:00:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>
