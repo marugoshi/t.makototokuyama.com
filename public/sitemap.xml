@@ -4,19 +4,24 @@
   
   <url>
     <loc>http://t.makototokuyama.com/posts/</loc>
-    <lastmod>2011-03-27T00:00:00+09:00</lastmod>
+    <lastmod>2018-08-13T00:00:00+09:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/</loc>
+    <lastmod>2018-08-13T00:00:00+09:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://t.makototokuyama.com/posts/2018-08-13-current-situation/</loc>
+    <lastmod>2018-08-13T00:00:00+09:00</lastmod>
   </url>
   
   <url>
     <loc>http://t.makototokuyama.com/posts/2011-03-27-custom-validation-for-rails3/</loc>
     <lastmod>2011-03-27T00:00:00+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://t.makototokuyama.com/</loc>
-    <lastmod>2011-03-27T00:00:00+09:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

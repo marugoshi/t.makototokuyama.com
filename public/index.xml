@@ -5,10 +5,19 @@
     <link>http://t.makototokuyama.com/</link>
     <description>Recent content on t</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 27 Mar 2011 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 13 Aug 2018 00:00:00 +0900</lastBuildDate>
     
 	<atom:link href="http://t.makototokuyama.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>近況</title>
+      <link>http://t.makototokuyama.com/posts/2018-08-13-current-situation/</link>
+      <pubDate>Mon, 13 Aug 2018 00:00:00 +0900</pubDate>
+      
+      <guid>http://t.makototokuyama.com/posts/2018-08-13-current-situation/</guid>
+      <description>ふと、ブログをまた書こうかなと思って過去に違うドメインで書いていたものを見たら 7 年も前だった。足の早いテック業界の情報なので 7 年も前のもの</description>
+    </item>
     
     <item>
       <title>rails3 のカスタムバリデーション</title>
