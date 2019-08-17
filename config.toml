@@ -2,3 +2,6 @@ hasCJKLanguage = true
 baseURL = "http://t.makototokuyama.com/"
 title = "t"
 theme = "tale"
+
+[Params]
+css = ["custom.css"]

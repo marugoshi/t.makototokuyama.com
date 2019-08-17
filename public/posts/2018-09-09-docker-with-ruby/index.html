@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				Docker で ruby を動かす &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		<link rel="stylesheet" href="/custom.css">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117975751-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117975751-3');
+    </script>
+  </head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2018-09-09 00:00:00 &#43;0900 JST">September 9, 2018</time>
+</div>
+		<h1 class="post-title">Docker で ruby を動かす</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+<p><a href="http://t.makototokuyama.com/posts/2018-08-13-current-situation/">近況に書いた通り</a>、次の環境ではいろいろと新しいことをやろうと思っている。そのひとつが Fargate の上で Rails を動かすというもの。これも書いた通りエンジニアが自分ひとりなので、できる限り寄り添わなくていいインフラ構成にしたい。</p>
+
+<p>それについてはいずれ書くとして、まずは基本的な Docker を動かすことについて書く。Docker とはなんぞやとか、コンテナ技術についてとか、座学については一通りざっと読んだ。ただ前職でプロジェクトでゼロから構築して運用したことはないので基本的なところから動かして学んでいく。</p>
+
+<p>で、動かすというからには実際に使うものを書きたい。ちょうど知人の依頼で CSV ファイルの文字コードを変換して必要な列だけを抜き出して別ファイルに書き出す、というお手伝いが発生したのでこれを課題にしてみる。実際にはそこで終わりではなくて、生成されたファイルを元にごにょごにょした処理をする部分もあるけどそこは都合により割愛。</p>
+
+<h2 id="ファイル構成">ファイル構成</h2>
+
+<pre>
+.
+├── data/
+|   ├──
+├── converter.rb
+├── Dockerfile
+└── Gemfile
+</pre>
+
+<h2 id="gemfile">Gemfile</h2>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">source <span style="color:#e6db74">:rubygems</span>
+gem <span style="color:#e6db74">&#34;roo&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>好き嫌いはあるかと思うけえど、そんなに頑張らずにやりたいので CSV のパース処理は roo を使う。</p>
+
+<h2 id="converter-rb">converter.rb</h2>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e">#!/usr/bin/env ruby</span>
+<span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+
+require <span style="color:#e6db74">&#34;rubygems&#34;</span>
+require <span style="color:#e6db74">&#34;csv&#34;</span>
+require <span style="color:#e6db74">&#34;bundler/setup&#34;</span>
+<span style="color:#66d9ef">Bundler</span><span style="color:#f92672">.</span>require
+
+<span style="color:#66d9ef">SRC_PATH</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;./data/sample.csv&#34;</span>
+<span style="color:#66d9ef">DST_PATH</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;./data/out.csv&#34;</span>
+puts <span style="color:#e6db74">&#34;file does not exist.&#34;</span> <span style="color:#f92672">and</span> exit <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">unless</span> <span style="color:#66d9ef">FileTest</span><span style="color:#f92672">.</span>exists? <span style="color:#66d9ef">SRC_PATH</span>
+
+win31 <span style="color:#f92672">=</span> <span style="color:#66d9ef">Encoding</span><span style="color:#f92672">::</span><span style="color:#66d9ef">Windows_31J</span>
+utf8 <span style="color:#f92672">=</span> <span style="color:#66d9ef">Encoding</span><span style="color:#f92672">::</span><span style="color:#66d9ef">UTF_8</span>
+<span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>write(<span style="color:#66d9ef">SRC_PATH</span>, <span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>read(<span style="color:#66d9ef">SRC_PATH</span>, <span style="color:#e6db74">encoding</span>: win31)<span style="color:#f92672">.</span>encode(utf8))
+
+new_lines <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+lines <span style="color:#f92672">=</span> <span style="color:#66d9ef">CSV</span><span style="color:#f92672">.</span>read <span style="color:#66d9ef">SRC_PATH</span>
+lines<span style="color:#f92672">.</span>each_with_index <span style="color:#66d9ef">do</span> <span style="color:#f92672">|</span>line, i<span style="color:#f92672">|</span>
+  line <span style="color:#f92672">=</span> line<span style="color:#f92672">.</span>map { <span style="color:#f92672">|</span>s<span style="color:#f92672">|</span> s<span style="color:#f92672">.</span>strip <span style="color:#66d9ef">if</span> s }
+  new_line <span style="color:#f92672">=</span> <span style="color:#f92672">[]</span>
+  new_line <span style="color:#f92672">&lt;&lt;</span> line<span style="color:#f92672">[</span><span style="color:#ae81ff">0</span><span style="color:#f92672">]</span>
+  new_line <span style="color:#f92672">&lt;&lt;</span> line<span style="color:#f92672">[</span><span style="color:#ae81ff">10</span><span style="color:#f92672">]</span>
+  new_line <span style="color:#f92672">&lt;&lt;</span> line<span style="color:#f92672">[</span><span style="color:#ae81ff">20</span><span style="color:#f92672">]</span>
+  new_lines <span style="color:#f92672">&lt;&lt;</span> new_line<span style="color:#f92672">.</span>join(<span style="color:#e6db74">&#34;,&#34;</span>)
+<span style="color:#66d9ef">end</span>
+
+<span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>write(<span style="color:#66d9ef">DST_PATH</span>, new_lines<span style="color:#f92672">.</span>join(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>))
+<span style="color:#66d9ef">File</span><span style="color:#f92672">.</span>delete(<span style="color:#66d9ef">SRC_PATH</span>)</code></pre></td></tr></table>
+</div>
+</div>
+
+<p>エンコードして直接上書きしちゃったりとか、もろもろ雑なのはご愛嬌。</p>
+
+<h2 id="dockerfile">Dockerfile</h2>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-docker" data-lang="docker"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> ruby:2.5</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENV</span><span style="color:#e6db74"> LANG C.UTF-8</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /usr/src/app</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>COPY Gemfile ./<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> bundle install<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>COPY . .<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span><span style="color:#e6db74">  [&#34;./converter.rb&#34;]</span></code></pre></td></tr></table>
+</div>
+</div>
+
+<p>あまり難しいことは考えず run したらプログラムが走るようにするだけ。</p>
+
+<h2 id="イメージ操作">イメージ操作</h2>
+
+<h3 id="作る">作る。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker image build -t marugoshi/csv-converter:latest .</code></pre></div>
+
+<h3 id="見る">見る。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker image ls</code></pre></div>
+
+<h3 id="消す">消す。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker image rm ID</code></pre></div>
+
+<h3 id="使われていないイメージを消す">使われていないイメージを消す。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker image prune</code></pre></div>
+
+<h2 id="コンテナ操作">コンテナ操作</h2>
+
+<h3 id="立ち上げる">立ち上げる。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker run --rm -it -v $PWD/data:/usr/src/app/data marugoshi/csv-converter</code></pre></div>
+
+<p>今回のように常時起動しないものは -rm オプションを渡すことで実行後に削除されるようだ。<br />
+ホスト側でファイルを取り出したいので -v でデータ用のディレクトリをマウントしている。</p>
+
+<h3 id="見る-1">見る。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker container ls</code></pre></div>
+
+<h3 id="使われていないコンテナを消す">使われていないコンテナを消す。</h3>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker container prune</code></pre></div>
+
+<h2 id="余談">余談</h2>
+
+<p>自分はとにかく短いエイリアスを作るのが大好きなので (たとえば <code>alias q='exit'</code> とか <code>alias m='make'</code> とか) このあたりのコマンドもすぐにエリアスを作った。直感的じゃないのでちょっとキモい。 docker 周りはとにかくコマンドが長いのがつらい。いずれ書くけど Makefile が再熱するのよくわかる。</p>
+
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">alias dok<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;docker&#39;</span>
+alias doki<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;docker image&#39;</span>
+alias dokc<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;docker container&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2018-08-13-current-situation/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-18 03:52:47.5176727 &#43;0900 JST m=&#43;0.476803501">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>
