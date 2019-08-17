@@ -5,19 +5,10 @@
     <link>http://t.makototokuyama.com/</link>
     <description>Recent content on t</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 19 Aug 2018 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 27 Mar 2011 00:00:00 +0900</lastBuildDate>
     
 	<atom:link href="http://t.makototokuyama.com/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Docker 座学</title>
-      <link>http://t.makototokuyama.com/posts/2018-08-19-docker-001-zagaku/</link>
-      <pubDate>Sun, 19 Aug 2018 00:00:00 +0900</pubDate>
-      
-      <guid>http://t.makototokuyama.com/posts/2018-08-19-docker-001-zagaku/</guid>
-      <description>次の仕事は ECS を使いたい。が、そもそも Docker について全然わかっていないので学んでいこうと思う。ゴールは本番環境で使えるようになるところまで。まずは</description>
-    </item>
     
     <item>
       <title>rails3 のカスタムバリデーション</title>
