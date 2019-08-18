@@ -11,14 +11,14 @@ draft: false
 
 ## ファイル構成
 
-<pre>
+{{< highlight plain >}}
 .
 ├── data/
-|   ├──
+|   └── sample.csv
 ├── converter.rb
 ├── Dockerfile
 └── Gemfile
-</pre>
+{{< / highlight >}}
 
 ## Gemfile
 
