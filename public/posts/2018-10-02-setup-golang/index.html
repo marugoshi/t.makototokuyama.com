@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>
+				Golang の開発環境を作る &middot; t
+		</title>
+
+		
+  		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700">
+		<link rel="stylesheet" href="/custom.css">
+		
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="t" />
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117975751-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117975751-3');
+    </script>
+  </head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">t</h2>
+				</a>
+				<ul>
+    <li><a href="https://www.makototokuyama.com">About</a></li>
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        
+        <br>
+        <span>on&nbsp;</span><time datetime="2018-10-02 00:00:00 &#43;0900 JST">October 2, 2018</time>
+</div>
+		<h1 class="post-title">Golang の開発環境を作る</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+<p><a href="/posts/2018-09-09-docker-with-ruby/">前回 Docker について書いた</a>けど、次の環境ではもうひとつやりたいことがある。Golang + Lambda な API の構築だ。Fargate を使いたいのと同じ動機で、インフラのあれこれから解放されたいという思いがある。</p>
+
+<p>Golang に関しても座学についてはざっと読んだけど、とにかく書いてみないと始まらない。まずはローカルの OSX に開発環境を構築していく。</p>
+
+<h2 id="インストール">インストール</h2>
+
+<p>構築していく、とはいったものの <code>brew install go</code> で終わり。下位互換のないアップグレードが少ないそうなので、業務で使う場合でも goenv 使うかどうかは微妙かなー。</p>
+
+<h2 id="環境変数">環境変数</h2>
+
+<p>今使っているバージョンは <code>$HOME/go</code> が使われるということ <code>$GOPATH</code> は設定しない。</p>
+
+<h2 id="エディタ-ide">エディタ(IDE)</h2>
+
+<p>GoLand にした。JetBrains Toolbox の年間サブスクリプション契約を済ませる。設定は、ほとんどデフォルトのままで見た目の色をいじくったくらい。まだデバッグ環境もちゃんと調べていない。Rubymine と違ってコンテナのランタイムを指定できないので、そこに不満が生じたら VSCode に乗り換えるかもしれない。</p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/posts/2018-09-09-docker-with-ruby/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2019-08-18 16:15:49.4423155 &#43;0900 JST m=&#43;0.496277501">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>
