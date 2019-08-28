@@ -202,3 +202,12 @@ func (c *converter) normalizeCompanyName(s string) string {
 ----
 
 ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。
+
+----
+
+## 参考
+
+* [Go言語でCSVの読み書き(sjis、euc、utf8対応](https://qiita.com/kesuzuki/items/202cc58db3fd1763c095)
+* [Go言語 - Shift_JISファイルの読み書き - hakeの日記](https://hake.hatenablog.com/entry/20150817/p1)
+* [Gos.Exit()とdefer](https://qiita.com/umisama/items/7be04949d670d8cdb99c)
+* [src/cmd/gofmt/gofmt.go - The Go Programming Language](https://golang.org/src/cmd/gofmt/gofmt.go)
