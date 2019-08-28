@@ -1,7 +1,7 @@
 ---
 title: "Golang で CSV を扱う"
 date: "2018-10-04T00:00:00+09:00"
-draft: true
+draft: false
 ---
 [前回は Golang のローカル開発環境について](/posts/2018-10-02-setup-golang/)書いた。今回はコードを書いてみる。[Docker を触ったときにも書いた通り](posts/2018-09-09-docker-with-ruby/)、書くからには動くものを書きたい。ということで、そのときに書いた ruby のコードを go で書きなおしてみようと思う。ファイルの入出力、文字コード周りは実用的でよい演習になりそうだ。
 
@@ -11,30 +11,75 @@ draft: true
 .
 ├── data/
 |   └── sample.csv
+├── vendor/ # (dep が生成)
+├── converter.go
+├── converter_test.go
+├── Gopkg.lock
+├── Gopkg.toml # (dep が生成)
 └── main.go
 {{< / highlight >}}
 
+## dep
 
-## main.go
+go のパッケージングマネージャー。以前は別パッケージだったらしいけど、現在は本家に取り込まれている。ということで、こいつを使っておけばいいんだろうな。
 
-コード内コメントは書きながらメモったこと。
+{{< highlight bash >}}
+go get -u github.com/golang/dep/cmd/dep
+{{< / highlight >}}
+
+### 初期化
+
+{{< highlight bash >}}
+dep init
+{{< / highlight >}}
+
+プロジェクトルートで打つと `Gopkg.toml` `Gopkg.lock` `vendor/` を生成してくれる。
+
+### 必要な外部ライブラリのインストール
+
+{{< highlight bash >}}
+dep ensure
+{{< / highlight >}}
+
+コードの中にある import を解析してダウンロードして `vendor` ディレクトリに保存してくれる。ライブラリ同士のバージョン依存性も解決してくれるようだ。便利すぎる。
+
+## ソース
+
+ruby のときはだーっと書いたけど、今回は go の機能に触れる意味をこめて interface を使ってみる。といっても今回のサンプルではあまり意味のない使い方だけど。
+
+### main.go
 
 {{< highlight go "linenos=pre" >}}
-// パッケージ宣言。名前空間をわけるための仕組み。
-// mainパッケージとその中のmain関数だけは特殊でエントリーポイントになる模様。
-// 通常はディレクトリ単位でパッケージを切るようだ。
 package main
 
-// インポート文。ほとんどのIDEやエディタでは自動で入力してくれる。
-// importしてるのに使ってないパッケージがあるとコンパイルできない。
-//
-// 日本語変換にはふたつ公式の外部パッケージを使っているので別途ダウンロードした。
-// go get golang.org/x/text/transform
-// go golang.org/x/text/transform
-// $HOME/go/srcにソース、$HOME/go/pkgに静的ライブラリが配置された。
+import (
+	"fmt"
+	"os"
+)
+
+const SRC_PATH = "./data/chumon.csv"
+const DST_PATH = "./data/out.csv"
+
+func main() {
+	converter := NewConverter(SRC_PATH, DST_PATH, false)
+	if err := converter.Execute(); err != nil {
+		fmt.Print(err.Error())
+		os.Exit(2)
+	}
+	os.Exit(0)
+}
+{{< / highlight >}}
+
+同じ階層にある converter を生成して処理結果を判別して終了している。
+
+### converter.go
+
+{{< highlight go "linenos=pre" >}}
+package main
+
 import (
 	"encoding/csv"
-	"fmt"
+	"github.com/pkg/errors"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
 	"io"
@@ -42,91 +87,77 @@ import (
 	"strings"
 )
 
-// エントリポイント。
-// 取得と書き出しで元のCSV行が2回ループしていて少し冗長だけど、
-// * ファイル操作をメソッド内で完結させたい
-// * どちらかがファイルではなくDBになるなどの差し替え可能性(ないけど)
-// * 上記含めてテストを書きやすくしたい
-// と思ってこんな形に。もっといい設計がありそうな気する。
-func main() {
-  // :=で代入と型の省略を行える。
-  // rubyのような言語からくるとキモく感じる。
-  // C#をからくると導入してくれないかなという気持ちになる。
-	records := readCsv("./data/in.csv")
-	if records == nil {
-		fmt.Print("records not found.")
-		os.Exit(2)
-	}
-	writeCsv("./data/out.csv", records)
-	os.Exit(0)
+type Converter interface {
+	Execute() error
 }
 
-func readCsv(path string) [][]string {
-  // ファイルのオープン。
-  // エラーについてはいろいろありそうだけど今回は受け取って表示して抜けるだけ。
-	f, err := os.Open(path)
+type converter struct {
+	srcPath  string
+	dstPath  string
+	hasIndex bool
+}
+
+func NewConverter(srcPath string, dstPath string, hasIndex bool) Converter {
+	return &converter{srcPath: srcPath, dstPath: dstPath, hasIndex: hasIndex}
+}
+
+func (c *converter) Execute() error {
+	reader, readerClose, err := c.getReader()
 	if err != nil {
-		fmt.Printf("error occured in read file:\n  %s", err)
-		os.Exit(2)
+		return err
 	}
+	readerClose()
 
-  // rubyで言うensureみたいなものという認識。
-  // ただpanicでは実行されるけどexitでは実行されないとかいろいろあるらしい。
-	defer f.Close()
-
-  // CSVを読み組む構造体を作る。SJISでデコードするように。
-	reader := csv.NewReader(transform.NewReader(f, japanese.ShiftJIS.NewDecoder()))
-	reader.LazyQuotes = true
-
-  // 多重配列の定義。mallocみたいなもの？と思ったけどサイズは固定じゃないからちょっと違うな。
-  // 要素数を可変にしたい場合、第2引数のサイズは0を指定。
-  // appendで増やしていく。
-	records := make([][]string, 0)
+	writer, writerClose, err := c.getWriter()
+	if err != nil {
+		return err
+	}
+	writerClose()
 
 	i := 0
 	for {
 		record, err := reader.Read()
-    // ファイルの終わりなら抜ける。
-    // データ量によってはストリームで読み込む必要がないためreader.ReadAll()でまとめて。
 		if err == io.EOF {
 			break
 		}
-		if i > 0 {
-			records = append(records, record)
+		if c.hasIndex && i == 0 {
+			continue
 		}
+		writer.Write(c.createNewRecord(record))
 		i++
 	}
-	return records
-}
-
-func writeCsv(path string, records [][]string) {
-  // ファイル作成。
-	f, err := os.Create(path)
-	if err != nil {
-		fmt.Printf("error occured in create file:\n  %s", err)
-		os.Exit(2)
-	}
-	defer f.Close()
-
-	writer := csv.NewWriter(f)
-
-  // 1行ずつ元のレコードを加工したものを書き込み。
-  // ここではバッファに貯めるだけで、Flushで実際に書き込まれる。
-	for _, v := range records {
-		writer.Write(createNewRecord(v))
-	}
 	writer.Flush()
+
+	return nil
 }
 
-func createNewRecord(old []string) []string {
-	var new []string
-	new = append(new, normalizeCompanyName(old[0]))
-	new = append(new, old[1])
-	new = append(new, old[2])
-	return new
+func (c *converter) getReader() (*csv.Reader, func(), error) {
+	srcFile, err := os.Open(c.srcPath)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "can not open %s", c.srcPath)
+	}
+	reader := csv.NewReader(transform.NewReader(srcFile, japanese.ShiftJIS.NewDecoder()))
+	reader.LazyQuotes = true
+	return reader, func() { defer srcFile.Close() }, nil
 }
 
-func normalizeCompanyName(s string) string {
+func (c *converter) getWriter() (*csv.Writer, func(), error) {
+	dstFile, err := os.Create(c.dstPath)
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "can not create %s", c.dstPath)
+	}
+	return csv.NewWriter(dstFile), func() { defer dstFile.Close() }, nil
+}
+
+func (c *converter) createNewRecord(src []string) []string {
+	var dst []string
+	dst = append(dst, c.normalizeCompanyName(src[2]))
+	dst = append(dst, src[4])
+	dst = append(dst, src[9])
+	return dst
+}
+
+func (c *converter) normalizeCompanyName(s string) string {
 	s = strings.Replace(s, "㈱", "株式会社", -1)
 	s = strings.Replace(s, "㈲", "有限会社", -1)
 	s = strings.Replace(s, "（", "(", -1)
@@ -136,3 +167,38 @@ func normalizeCompanyName(s string) string {
 	return s
 }
 {{< / highlight >}}
+
+* import
+  * 日本語変換にはふたつ公式の外部パッケージを使っている。
+  * また標準エラーの薄いラッパー pkg/errors も使っている。シンプルで使い勝手良い。
+* interface
+  * 公開メソッドのインターフェースのみを定義してあり、そのメソッドを定義することでその intarface の型として振舞うことができる。
+* struct
+  * 引数を持つだけの構造体。
+	* メソッドも変数も、小文字始まりにすると private になる。
+* Execute()
+  * Converter interface の実装。
+	* このメソッドのみを公開していて、それ以外は private メソッドになる。テストはホワイトテストをたくさん書く感じで後ほど。
+	* 処理の流れは以下の通り。
+	  1. 元になるファイルの reader を取得する
+		1. 書き出し先のファイルの writer を取得する
+		1. ファイルの終端まで reader から 1 行ずつ読み込む
+		1. writer のバッファに 1 行ずつ書き込む
+		1. flush してファイルに書き込む
+	* それぞれの処理でエラーが発生した場合はメッセージを付与してエラーを返す。
+* getReader()
+  * io.Reader インターフェースを使った csv.Reader を生成する。読み込むだけで csv をパースしてくれる。
+	* transform.Reader を使うことで文字コードの変換をしつつ読み込んでくれる。
+	* 返り値でメソッドを返しているのは、このメソッドの中で close してしまうとそこでファイルが閉じて読み込みができなくなってしまうため。converter struct の中にファイルポインタを指定するのでもいいんだろうけど、暗黙的にどこかで値がセットされるよりは明示的な方がいいかなと思ってこうしている。どうなんだろうね。
+	* defer はメソッドの最後で実行される。どこかで panic が起きても実行されるけど、exit が起きると実行しないらしい。
+* getWriter()
+  * 書き込むファイルを生成。
+	* io.Writer インターフェースを使った csv.Writer を生成する。ここは普通の writer でもいいような気もするけど試していない。わざわざ実装があるってことは使った方がいいんだろうな、くらい。必要があったら勝手にクオートしてくれたりするのかな？
+* createNewRecord(src []string)
+  * CSV の 1 行を作って返す。
+* normalizeCompanyName(s string)
+  * 文字列の置換を試す。
+
+----
+
+ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。
