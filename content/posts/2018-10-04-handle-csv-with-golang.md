@@ -11,12 +11,12 @@ draft: false
 .
 ├── data/
 |   ├── src.csv
-|   └── dst.csv
-├── vendor/ # (dep が生成)
+|   └── dst.csv // (プログラムが生成)
+├── vendor/ // (dep が生成)
 ├── converter.go
 ├── converter_test.go
 ├── Gopkg.lock
-├── Gopkg.toml # (dep が生成)
+├── Gopkg.toml // (dep が生成)
 └── main.go
 {{< / highlight >}}
 
