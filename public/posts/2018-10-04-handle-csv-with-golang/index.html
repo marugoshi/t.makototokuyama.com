@@ -66,7 +66,8 @@
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">.
 ├── data/
-|   └── sample.csv
+|   ├── src.csv
+|   └── dst.csv
 ├── vendor/ # (dep が生成)
 ├── converter.go
 ├── converter_test.go
@@ -127,8 +128,8 @@
 	<span style="color:#e6db74">&#34;os&#34;</span>
 )
 
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">SRC_PATH</span> = <span style="color:#e6db74">&#34;./data/chumon.csv&#34;</span>
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">DST_PATH</span> = <span style="color:#e6db74">&#34;./data/out.csv&#34;</span>
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">SRC_PATH</span> = <span style="color:#e6db74">&#34;./data/src.csv&#34;</span>
+<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">DST_PATH</span> = <span style="color:#e6db74">&#34;./data/dst.csv&#34;</span>
 
 <span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
 	<span style="color:#a6e22e">converter</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">NewConverter</span>(<span style="color:#a6e22e">SRC_PATH</span>, <span style="color:#a6e22e">DST_PATH</span>, <span style="color:#66d9ef">false</span>)
@@ -299,7 +300,7 @@
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">converter</span>) <span style="color:#a6e22e">getReader</span>() (<span style="color:#f92672">*</span><span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">Reader</span>, <span style="color:#66d9ef">func</span>(), <span style="color:#66d9ef">error</span>) {
 	<span style="color:#a6e22e">srcFile</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">srcPath</span>)
 	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>())
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrapf</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;can not open %s&#34;</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">srcPath</span>)
 	}
 	<span style="color:#a6e22e">reader</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">transform</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">srcFile</span>, <span style="color:#a6e22e">japanese</span>.<span style="color:#a6e22e">ShiftJIS</span>.<span style="color:#a6e22e">NewDecoder</span>()))
 	<span style="color:#a6e22e">reader</span>.<span style="color:#a6e22e">LazyQuotes</span> = <span style="color:#66d9ef">true</span>
@@ -309,16 +310,16 @@
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">converter</span>) <span style="color:#a6e22e">getWriter</span>() (<span style="color:#f92672">*</span><span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">Writer</span>, <span style="color:#66d9ef">func</span>(), <span style="color:#66d9ef">error</span>) {
 	<span style="color:#a6e22e">dstFile</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">dstPath</span>)
 	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>())
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrapf</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;can not create %s&#34;</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">dstPath</span>)
 	}
 	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">NewWriter</span>(<span style="color:#a6e22e">dstFile</span>), <span style="color:#66d9ef">func</span>() { <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">dstFile</span>.<span style="color:#a6e22e">Close</span>() }, <span style="color:#66d9ef">nil</span>
 }
 
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">converter</span>) <span style="color:#a6e22e">createNewRecord</span>(<span style="color:#a6e22e">src</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
 	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">dst</span> []<span style="color:#66d9ef">string</span>
-	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">normalizeCompanyName</span>(<span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">2</span>]))
-	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">4</span>])
-	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">9</span>])
+	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">normalizeCompanyName</span>(<span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">0</span>]))
+	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">1</span>])
+	<span style="color:#a6e22e">dst</span> = append(<span style="color:#a6e22e">dst</span>, <span style="color:#a6e22e">src</span>[<span style="color:#ae81ff">2</span>])
 	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dst</span>
 }
 
@@ -390,7 +391,7 @@
 <li>normalizeCompanyName(s string)
 
 <ul>
-<li>文字列の置換を試す。</li>
+<li>文字列の置換を試す。会社名に略語などが入っていた場合、揺らぎを統一するような処理を入れてみる。機種依存文字が問題なく読み込めているかも試す。</li>
 </ul></li>
 </ul>
 
@@ -419,7 +420,7 @@
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-09-08 23:52:19.2395312 &#43;0900 JST m=&#43;0.473041601">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2019-09-09 00:37:04.3157432 &#43;0900 JST m=&#43;0.429327501">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

@@ -10,7 +10,8 @@ draft: false
 {{< highlight plain >}}
 .
 ├── data/
-|   └── sample.csv
+|   ├── src.csv
+|   └── dst.csv
 ├── vendor/ # (dep が生成)
 ├── converter.go
 ├── converter_test.go
@@ -57,8 +58,8 @@ import (
 	"os"
 )
 
-const SRC_PATH = "./data/chumon.csv"
-const DST_PATH = "./data/out.csv"
+const SRC_PATH = "./data/src.csv"
+const DST_PATH = "./data/dst.csv"
 
 func main() {
 	converter := NewConverter(SRC_PATH, DST_PATH, false)
@@ -134,7 +135,7 @@ func (c *converter) Execute() error {
 func (c *converter) getReader() (*csv.Reader, func(), error) {
 	srcFile, err := os.Open(c.srcPath)
 	if err != nil {
-		return nil, nil, errors.New(err.Error())
+		return nil, nil, errors.Wrapf(err, "can not open %s", c.srcPath)
 	}
 	reader := csv.NewReader(transform.NewReader(srcFile, japanese.ShiftJIS.NewDecoder()))
 	reader.LazyQuotes = true
@@ -144,16 +145,16 @@ func (c *converter) getReader() (*csv.Reader, func(), error) {
 func (c *converter) getWriter() (*csv.Writer, func(), error) {
 	dstFile, err := os.Create(c.dstPath)
 	if err != nil {
-		return nil, nil, errors.New(err.Error())
+		return nil, nil, errors.Wrapf(err, "can not create %s", c.dstPath)
 	}
 	return csv.NewWriter(dstFile), func() { defer dstFile.Close() }, nil
 }
 
 func (c *converter) createNewRecord(src []string) []string {
 	var dst []string
-	dst = append(dst, c.normalizeCompanyName(src[2]))
-	dst = append(dst, src[4])
-	dst = append(dst, src[9])
+	dst = append(dst, c.normalizeCompanyName(src[0]))
+	dst = append(dst, src[1])
+	dst = append(dst, src[2])
 	return dst
 }
 
@@ -197,7 +198,7 @@ func (c *converter) normalizeCompanyName(s string) string {
 * createNewRecord(src []string)
   * CSV の 1 行を作って返す。
 * normalizeCompanyName(s string)
-  * 文字列の置換を試す。
+  * 文字列の置換を試す。会社名に略語などが入っていた場合、揺らぎを統一するような処理を入れてみる。機種依存文字が問題なく読み込めているかも試す。
 
 ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。
 
