@@ -134,7 +134,7 @@ func (c *converter) Execute() error {
 func (c *converter) getReader() (*csv.Reader, func(), error) {
 	srcFile, err := os.Open(c.srcPath)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "can not open %s", c.srcPath)
+		return nil, nil, errors.New(err.Error())
 	}
 	reader := csv.NewReader(transform.NewReader(srcFile, japanese.ShiftJIS.NewDecoder()))
 	reader.LazyQuotes = true
@@ -144,7 +144,7 @@ func (c *converter) getReader() (*csv.Reader, func(), error) {
 func (c *converter) getWriter() (*csv.Writer, func(), error) {
 	dstFile, err := os.Create(c.dstPath)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "can not create %s", c.dstPath)
+		return nil, nil, errors.New(err.Error())
 	}
 	return csv.NewWriter(dstFile), func() { defer dstFile.Close() }, nil
 }
@@ -199,11 +199,7 @@ func (c *converter) normalizeCompanyName(s string) string {
 * normalizeCompanyName(s string)
   * 文字列の置換を試す。
 
-----
-
 ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。
-
-----
 
 ## 参考
 

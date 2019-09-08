@@ -299,7 +299,7 @@
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">converter</span>) <span style="color:#a6e22e">getReader</span>() (<span style="color:#f92672">*</span><span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">Reader</span>, <span style="color:#66d9ef">func</span>(), <span style="color:#66d9ef">error</span>) {
 	<span style="color:#a6e22e">srcFile</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">srcPath</span>)
 	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrapf</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;can not open %s&#34;</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">srcPath</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>())
 	}
 	<span style="color:#a6e22e">reader</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">transform</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">srcFile</span>, <span style="color:#a6e22e">japanese</span>.<span style="color:#a6e22e">ShiftJIS</span>.<span style="color:#a6e22e">NewDecoder</span>()))
 	<span style="color:#a6e22e">reader</span>.<span style="color:#a6e22e">LazyQuotes</span> = <span style="color:#66d9ef">true</span>
@@ -309,7 +309,7 @@
 <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">converter</span>) <span style="color:#a6e22e">getWriter</span>() (<span style="color:#f92672">*</span><span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">Writer</span>, <span style="color:#66d9ef">func</span>(), <span style="color:#66d9ef">error</span>) {
 	<span style="color:#a6e22e">dstFile</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">dstPath</span>)
 	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">Wrapf</span>(<span style="color:#a6e22e">err</span>, <span style="color:#e6db74">&#34;can not create %s&#34;</span>, <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">dstPath</span>)
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>())
 	}
 	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">csv</span>.<span style="color:#a6e22e">NewWriter</span>(<span style="color:#a6e22e">dstFile</span>), <span style="color:#66d9ef">func</span>() { <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">dstFile</span>.<span style="color:#a6e22e">Close</span>() }, <span style="color:#66d9ef">nil</span>
 }
@@ -394,11 +394,7 @@
 </ul></li>
 </ul>
 
-<hr />
-
 <p>ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。</p>
-
-<hr />
 
 <h2 id="参考">参考</h2>
 
@@ -423,7 +419,7 @@
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-08-29 00:45:00.0873913 &#43;0900 JST m=&#43;0.405619101">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2019-09-08 23:52:19.2395312 &#43;0900 JST m=&#43;0.473041601">2019</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
