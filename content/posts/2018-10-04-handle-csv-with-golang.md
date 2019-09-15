@@ -54,31 +54,6 @@ ruby のときはだーっと書いたけど、今回は go の機能に触れ�
 package main
 
 import (
-	"fmt"
-	"os"
-)
-
-const SRC_PATH = "./data/src.csv"
-const DST_PATH = "./data/dst.csv"
-
-func main() {
-	converter := NewConverter(SRC_PATH, DST_PATH, false)
-	if err := converter.Execute(); err != nil {
-		fmt.Print(err.Error())
-		os.Exit(2)
-	}
-	os.Exit(0)
-}
-{{< / highlight >}}
-
-同じ階層にある converter を生成して処理結果を判別して終了している。
-
-### converter.go
-
-{{< highlight go "linenos=pre" >}}
-package main
-
-import (
 	"encoding/csv"
 	"github.com/pkg/errors"
 	"golang.org/x/text/encoding/japanese"
@@ -86,6 +61,12 @@ import (
 	"io"
 	"os"
 	"strings"
+)
+
+const (
+	CompanyIndex = 2
+	NameIndex    = 4
+	EmailIndex   = 9
 )
 
 type Converter interface {
@@ -118,12 +99,17 @@ func (c *converter) Execute() error {
 	i := 0
 	for {
 		record, err := reader.Read()
+		if c.hasIndex && i == 0 {
+			i++
+			continue
+		}
 		if err == io.EOF {
 			break
 		}
-		if c.hasIndex && i == 0 {
-			continue
+		if record[0] == "" {
+			break
 		}
+
 		writer.Write(c.createNewRecord(record))
 		i++
 	}
@@ -152,9 +138,9 @@ func (c *converter) getWriter() (*csv.Writer, func(), error) {
 
 func (c *converter) createNewRecord(src []string) []string {
 	var dst []string
-	dst = append(dst, c.normalizeCompanyName(src[0]))
-	dst = append(dst, src[1])
-	dst = append(dst, src[2])
+	dst = append(dst, c.normalizeCompanyName(src[CompanyIndex]))
+	dst = append(dst, src[NameIndex])
+	dst = append(dst, src[EmailIndex])
 	return dst
 }
 
@@ -198,7 +184,7 @@ func (c *converter) normalizeCompanyName(s string) string {
 * createNewRecord(src []string)
   * CSV の 1 行を作って返す。
 * normalizeCompanyName(s string)
-  * 文字列の置換を試す。会社名に略語などが入っていた場合、揺らぎを統一するような処理を入れてみる。機種依存文字が問題なく読み込めているかも試す。
+  * 文字列の置換を試す。会社名に略語などが入っていた場合、揺らぎを統一するような処理を入れてみる。機種依存文字が問題なく読み込めているかも試す。用途を察してください。
 
 ざっとこんな感じかな。シンプルに書けるけど error はやはり面倒だと感じる。次はテストも書いてみるか。
 
