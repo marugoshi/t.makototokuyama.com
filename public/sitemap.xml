@@ -3,25 +3,20 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://t.makototokuyama.com/posts/2018-10-04-handle-csv-with-golang/</loc>
-    <lastmod>2018-10-04T00:00:00+09:00</lastmod>
+    <loc>http://t.makototokuyama.com/posts/2018-10-02-setup-golang/</loc>
+    <lastmod>2018-10-02T00:00:00+09:00</lastmod>
   </url>
   
   <url>
     <loc>http://t.makototokuyama.com/posts/</loc>
-    <lastmod>2018-10-04T00:00:00+09:00</lastmod>
+    <lastmod>2018-10-02T00:00:00+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://t.makototokuyama.com/</loc>
-    <lastmod>2018-10-04T00:00:00+09:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://t.makototokuyama.com/posts/2018-10-02-setup-golang/</loc>
     <lastmod>2018-10-02T00:00:00+09:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>

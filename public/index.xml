@@ -5,19 +5,10 @@
     <link>http://t.makototokuyama.com/</link>
     <description>Recent content on t</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 04 Oct 2018 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 02 Oct 2018 00:00:00 +0900</lastBuildDate>
     
 	<atom:link href="http://t.makototokuyama.com/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Golang で CSV を扱う</title>
-      <link>http://t.makototokuyama.com/posts/2018-10-04-handle-csv-with-golang/</link>
-      <pubDate>Thu, 04 Oct 2018 00:00:00 +0900</pubDate>
-      
-      <guid>http://t.makototokuyama.com/posts/2018-10-04-handle-csv-with-golang/</guid>
-      <description>前回は Golang のローカル開発環境について書いた。今回はコードを書いてみる。Docker を触ったときにも書いた通り、書くからには動くものを書きたい。</description>
-    </item>
     
     <item>
       <title>Golang の開発環境を作る</title>

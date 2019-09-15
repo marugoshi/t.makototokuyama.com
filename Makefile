@@ -35,3 +35,4 @@ deploy:
 	aws s3 sync --exact-timestamps --delete public s3://t.makototokuyama.com ${OPTION}
 	git add .
 	git ci -m 'update'
+	git push origin master
