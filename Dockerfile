@@ -1,4 +1,4 @@
-FROM golang:stretch
+FROM golang:1.13.5-stretch
 
 # Set env
 ENV LANG C.UTF-8
