@@ -1,4 +1,4 @@
-FROM golang:1.13.6-alpine
+FROM golang:1.14.0-alpine
 
 # Set env
 ENV LANG C.UTF-8
